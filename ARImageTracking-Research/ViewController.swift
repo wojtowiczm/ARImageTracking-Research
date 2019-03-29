@@ -15,8 +15,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBOutlet var sceneView: ARSCNView!
     
     let referenceImages =  ARReferenceImage.referenceImages(inGroupNamed: "Images", bundle: Bundle.main)!
-    //let player = AVPlayer(url: URL(string: "https://www.youtube.com/embed/rLl9XBg7wSs")!)
-    let videoPlayer = AVPlayer(url: Bundle.main.url(forResource: "IMG_0377", withExtension: "MOV")!)
+    var videoPlayer: AVPlayer = AVPlayer()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,28 +48,25 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         let node = SCNNode()
         
-        if let imageAnchor = anchor as? ARImageAnchor {
-            let plane = SCNPlane(width: imageAnchor.referenceImage.physicalSize.width, height: imageAnchor.referenceImage.physicalSize.height)
-            plane.firstMaterial?.diffuse.contents = UIColor(white: 1, alpha: 0.8)
-            let planeNode = SCNNode(geometry: plane)
-              planeNode.eulerAngles.x = -.pi / 2
-            
-            setupVideoOnNode(planeNode)
-            node.addChildNode(planeNode)
-        }
+        guard let imageAnchor = anchor as? ARImageAnchor else { return node }
+        let plane = SCNPlane(width: imageAnchor.referenceImage.physicalSize.width, height: imageAnchor.referenceImage.physicalSize.height)
+        plane.firstMaterial?.diffuse.contents = UIColor(white: 1, alpha: 0.8)
+        let planeNode = SCNNode(geometry: plane)
+        planeNode.eulerAngles.x = -.pi / 2
         
+        setupVideo(on: planeNode, referenceImage: imageAnchor.referenceImage)
+        node.addChildNode(planeNode)
         return node
-        
     }
     
-    func setupVideoOnNode(_ node: SCNNode){
-        
+    func setupVideo(on node: SCNNode, referenceImage: ARReferenceImage){
+        videoPlayer = AVPlayer(url: videoUrl(for: referenceImage)!)
         let videoPlayerNode: SKVideoNode = SKVideoNode(avPlayer: videoPlayer)
         videoPlayerNode.yScale = -1
 
         let spriteKitScene = SKScene(size: CGSize(width: 720, height: 1280))
         spriteKitScene.scaleMode = .aspectFit
-        videoPlayerNode.position = CGPoint(x: spriteKitScene.size.width/2, y: spriteKitScene.size.height/2)
+        videoPlayerNode.position = CGPoint(x: spriteKitScene.size.width / 2, y: spriteKitScene.size.height / 2)
         videoPlayerNode.size = spriteKitScene.size
         spriteKitScene.addChild(videoPlayerNode)
         
@@ -86,13 +82,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             self.videoPlayer.seek(to: CMTime.zero)
             self.videoPlayer.play()
 
-            print("reset Video")
-            
         }
     }
     
-    private func videoNode(for image: ARReferenceImage) {
-        
+    private func videoUrl(for image: ARReferenceImage) -> URL? {
+        return Bundle.main.url(forResource: "Matrix", withExtension: "mov")
     }
 
     
