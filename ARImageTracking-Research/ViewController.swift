@@ -60,7 +60,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func setupVideo(on node: SCNNode, referenceImage: ARReferenceImage) {
-        videoPlayer = AVPlayer(url: videoUrl(for: referenceImage)!)
+        guard let videoURL = videoURL(for: referenceImage) else { return }
+        videoPlayer = AVPlayer(url: videoURL)
         let videoPlayerNode: SKVideoNode = SKVideoNode(avPlayer: videoPlayer)
         videoPlayerNode.yScale = -1
 
@@ -84,7 +85,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    private func videoUrl(for image: ARReferenceImage) -> URL? {
+    private func videoURL(for image: ARReferenceImage) -> URL? {
         guard let imageName = image.name else { return nil }
         switch imageName {
         case "FF-Poster-1": return Bundle.main.url(forResource: "FastAndFuriousTrailer", withExtension: "mov")
