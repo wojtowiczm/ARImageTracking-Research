@@ -59,7 +59,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return node
     }
     
-    func setupVideo(on node: SCNNode, referenceImage: ARReferenceImage){
+    func setupVideo(on node: SCNNode, referenceImage: ARReferenceImage) {
         videoPlayer = AVPlayer(url: videoUrl(for: referenceImage)!)
         let videoPlayerNode: SKVideoNode = SKVideoNode(avPlayer: videoPlayer)
         videoPlayerNode.yScale = -1
@@ -73,7 +73,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         node.geometry?.firstMaterial?.diffuse.contents = spriteKitScene
 
         videoPlayerNode.play()
-        videoPlayer.volume = 0
     
     }
     
@@ -86,7 +85,29 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     private func videoUrl(for image: ARReferenceImage) -> URL? {
-        return Bundle.main.url(forResource: "Matrix", withExtension: "mov")
+        guard let imageName = image.name else { return nil }
+        switch imageName {
+        case "FF-Poster-1": return Bundle.main.url(forResource: "FastAndFuriousTrailer", withExtension: "mov")
+        case "Matrix-Poster": return Bundle.main.url(forResource: "MatrixTrailer", withExtension: "mov")
+        default: return nil
+        }
+    }
+    
+    func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
+        
+        for anchor in anchors {
+            
+            if let imageAnchor = anchor as? ARImageAnchor{
+                
+                //2. If The ImageAnchor Is No Longer Tracked Then Handle The Event
+                if !imageAnchor.isTracked {
+                    videoPlayer.pause()
+                }else{
+                    
+                    
+                }
+            }
+        }
     }
 
     
