@@ -10,6 +10,11 @@ import UIKit
 import SceneKit
 import ARKit
 
+enum TrackableImages {
+    static let matrix = "Matrix-Poster"
+    static let tux = "tux"
+}
+
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
@@ -19,24 +24,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Set the view's delegate
+
         sceneView.delegate = self
-        
-        // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
         
         sceneView.scene = SCNScene(named: "art.scnassets/Game.scn")!
-        loopVideo()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        let configuration = ARImageTrackingConfiguration()
-        configuration.trackingImages = referenceImages
-        configuration.maximumNumberOfTrackedImages = referenceImages.count
-        sceneView.session.run(configuration)
+        runConfiguration()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -44,86 +41,76 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.session.pause()
     }
     
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
+    private func runConfiguration() {
+        let configuration = ARImageTrackingConfiguration()
         
+        // Setup image tracking
+        configuration.trackingImages = referenceImages
+        configuration.maximumNumberOfTrackedImages = referenceImages.count
+        sceneView.session.run(configuration)
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
         let node = SCNNode()
         
         guard let imageAnchor = anchor as? ARImageAnchor else { return node }
-        let plane = SCNPlane(width: imageAnchor.referenceImage.physicalSize.width, height: imageAnchor.referenceImage.physicalSize.height)
-        plane.firstMaterial?.diffuse.contents = UIColor(white: 1, alpha: 0.8)
-        let planeNode = SCNNode(geometry: plane)
-        planeNode.eulerAngles.x = -.pi / 2
-        
-        setupVideo(on: planeNode, referenceImage: imageAnchor.referenceImage)
-        node.addChildNode(planeNode)
+        // Generate proper node for anchor
+        if let childNode = nodeFor(imageAnchor) {
+            node.addChildNode(childNode)
+        }
         return node
     }
     
-    func setupVideo(on node: SCNNode, referenceImage: ARReferenceImage) {
-        guard let videoURL = videoURL(for: referenceImage) else { return }
+    private func nodeFor(_ imageAnchor: ARImageAnchor) -> SCNNode? {
+        
+        // Setup plane with physical dimensions
+        let plane = SCNPlane(width: imageAnchor.referenceImage.physicalSize.width, height: imageAnchor.referenceImage.physicalSize.height)
+        
+        // Add white background
+        plane.firstMaterial?.diffuse.contents = UIColor(white: 1, alpha: 0.8)
+        let planeNode = SCNNode(geometry: plane)
+        
+        // Rotate x axis - 90
+        planeNode.eulerAngles.x = -.pi / 2
+    
+        switch imageAnchor.name {
+        case TrackableImages.matrix: setupVideo(on: planeNode)
+        case TrackableImages.tux: setupObject(on: planeNode)
+        default: return nil
+        }
+        return planeNode
+    }
+    
+    // Video node
+    
+    func setupVideo(on node: SCNNode) {
+        guard let videoURL = Bundle.main.url(forResource: "MatrixTrailer", withExtension: "mov") else { return }
+       
+        // Create video player node
         videoPlayer = AVPlayer(url: videoURL)
         let videoPlayerNode: SKVideoNode = SKVideoNode(avPlayer: videoPlayer)
         videoPlayerNode.yScale = -1
-
+        
+        // Setup scene for player
         let spriteKitScene = SKScene(size: CGSize(width: 720, height: 1280))
         spriteKitScene.scaleMode = .aspectFit
         videoPlayerNode.position = CGPoint(x: spriteKitScene.size.width / 2, y: spriteKitScene.size.height / 2)
         videoPlayerNode.size = spriteKitScene.size
         spriteKitScene.addChild(videoPlayerNode)
         
+        // Add player to plane
         node.geometry?.firstMaterial?.diffuse.contents = spriteKitScene
-
         videoPlayerNode.play()
-    
     }
     
-    private func loopVideo() {
-        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: videoPlayer.currentItem, queue: nil) { notification in
-            self.videoPlayer.seek(to: CMTime.zero)
-            self.videoPlayer.play()
-
-        }
-    }
+    // 3D Object node
     
-    private func videoURL(for image: ARReferenceImage) -> URL? {
-        guard let imageName = image.name else { return nil }
-        switch imageName {
-        case "FF-Poster-1": return Bundle.main.url(forResource: "FastAndFuriousTrailer", withExtension: "mov")
-        case "Matrix-Poster": return Bundle.main.url(forResource: "MatrixTrailer", withExtension: "mov")
-        default: return nil
-        }
-    }
-    
-    func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
+    func setupObject(on node: SCNNode) {
+        let penguinScene = SCNScene(named: "art.scnassets/ship.scn")!
+        let penguinNode = penguinScene.rootNode.childNodes.first!
+        penguinNode.position = SCNVector3Zero
+        penguinNode.position.z = 0.15
         
-        for anchor in anchors {
-            
-            if let imageAnchor = anchor as? ARImageAnchor{
-                
-                //2. If The ImageAnchor Is No Longer Tracked Then Handle The Event
-                if !imageAnchor.isTracked {
-                    videoPlayer.pause()
-                }else{
-                    
-                    
-                }
-            }
-        }
-    }
-
-    
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user
-        
-    }
-    
-    func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay
-        
-    }
-    
-    func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required
-        
+        node.addChildNode(penguinNode)
     }
 }
