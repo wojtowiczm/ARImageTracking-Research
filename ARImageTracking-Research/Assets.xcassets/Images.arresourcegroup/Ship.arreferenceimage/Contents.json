@@ -2,7 +2,7 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "FF-Poster.jpg"
+      "filename" : "Ship.png"
     }
   ],
   "info" : {
@@ -10,7 +10,7 @@
     "author" : "xcode"
   },
   "properties" : {
-    "width" : 25,
+    "width" : 30,
     "unit" : "centimeters"
   }
 }

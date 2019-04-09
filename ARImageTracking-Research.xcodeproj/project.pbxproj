@@ -13,6 +13,7 @@
 		FF22538A224BD7AE002ABDF7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FF225388224BD7AE002ABDF7 /* Main.storyboard */; };
 		FF22538C224BD7B1002ABDF7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FF22538B224BD7B1002ABDF7 /* Assets.xcassets */; };
 		FF22538F224BD7B1002ABDF7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FF22538D224BD7B1002ABDF7 /* LaunchScreen.storyboard */; };
+		FF581801225D114500113225 /* MatrixTrailer.mov in Resources */ = {isa = PBXBuildFile; fileRef = FF581800225D114400113225 /* MatrixTrailer.mov */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		FF22538B224BD7B1002ABDF7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FF22538E224BD7B1002ABDF7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FF225390224BD7B1002ABDF7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FF581800225D114400113225 /* MatrixTrailer.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; name = MatrixTrailer.mov; path = ../../../Downloads/MatrixTrailer.mov; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +42,7 @@
 		FF225376224BD7AE002ABDF7 = {
 			isa = PBXGroup;
 			children = (
+				FF581800225D114400113225 /* MatrixTrailer.mov */,
 				FF225381224BD7AE002ABDF7 /* ARImageTracking-Research */,
 				FF225380224BD7AE002ABDF7 /* Products */,
 			);
@@ -125,6 +128,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FF581801225D114500113225 /* MatrixTrailer.mov in Resources */,
 				FF225385224BD7AE002ABDF7 /* art.scnassets in Resources */,
 				FF22538F224BD7B1002ABDF7 /* LaunchScreen.storyboard in Resources */,
 				FF22538C224BD7B1002ABDF7 /* Assets.xcassets in Resources */,
@@ -287,7 +291,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3K35NQVFNW;
+				DEVELOPMENT_TEAM = XNR2HTH9R9;
 				INFOPLIST_FILE = "ARImageTracking-Research/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -305,7 +309,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3K35NQVFNW;
+				DEVELOPMENT_TEAM = XNR2HTH9R9;
 				INFOPLIST_FILE = "ARImageTracking-Research/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

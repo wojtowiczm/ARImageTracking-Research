@@ -5,13 +5,10 @@
   },
   "resources" : [
     {
-      "filename" : "FF-Poster-1.arreferenceimage"
-    },
-    {
       "filename" : "Matrix-Poster.arreferenceimage"
     },
     {
-      "filename" : "tux.arreferenceimage"
+      "filename" : "Ship.arreferenceimage"
     }
   ]
 }
