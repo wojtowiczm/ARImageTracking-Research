@@ -12,12 +12,14 @@ import ARKit
 
 enum TrackableImages {
     static let matrix = "Matrix-Poster"
-    static let ship = "Ship"
+    static let ship = "SPACESHIP"
 }
 
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
+    
+    var videoNode: SKVideoNode?
     
     lazy var sceneLight: SCNLight = {
         let light = SCNLight()
@@ -49,11 +51,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         sceneView.scene = SCNScene()//named: "art.scnassets/Game.scn")!
         
-        // Add light to scene
+
         let lightNode = SCNNode()
         lightNode.light = sceneLight
         lightNode.position = SCNVector3(x: 0, y: 10, z: 2)
-        
+
         sceneView.scene.rootNode.addChildNode(lightNode)
     }
     
@@ -66,6 +68,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // configure light estimation
         configuration.isLightEstimationEnabled = true
         sceneView.session.run(configuration)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        guard let result = sceneView.hitTest(touch.location(in: sceneView)).last else { return }
+        guard let videoNode = result.node as? SKVideoNode else { return }
     }
     
     // Update light
@@ -118,21 +126,21 @@ class ViewController: UIViewController, ARSCNViewDelegate {
        
         // Create video player node
         videoPlayer = AVPlayer(url: videoURL)
-        let videoPlayerNode: SKVideoNode = SKVideoNode(avPlayer: videoPlayer)
-        videoPlayerNode.yScale = -1
+        videoNode = SKVideoNode(avPlayer: videoPlayer)
+        videoNode?.yScale = -1
         
         // Setup scene for player
         let spriteKitScene = SKScene(size: CGSize(width: 720, height: 1280))
         spriteKitScene.scaleMode = .aspectFit
-        videoPlayerNode.position = CGPoint(
+        videoNode?.position = CGPoint(
             x: spriteKitScene.size.width / 2,
             y: spriteKitScene.size.height / 2)
-        videoPlayerNode.size = spriteKitScene.size
-        spriteKitScene.addChild(videoPlayerNode)
+        videoNode?.size = spriteKitScene.size
+        spriteKitScene.addChild(videoNode!)
         
         // Add player to plane
         node.geometry?.firstMaterial?.diffuse.contents = spriteKitScene
-        videoPlayerNode.play()
+        videoNode!.play()
     }
     
     // 3D Object node
@@ -142,7 +150,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let shipNode = shipScene.rootNode.childNodes.first!
         shipNode.position = SCNVector3Zero
         shipNode.position.y = 0.15
-        
         node.addChildNode(shipNode)
     }
 }
